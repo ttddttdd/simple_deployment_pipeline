@@ -1,6 +1,6 @@
-#  The Simple_deployment_pipeline
+#  Simple_deployment_pipeline
 
-This is simple deployment pipeline for Golang application and CockroachDB.
+This is a simple deployment pipeline for the Golang application and CockroachDB.
 
 ## System Requirements:
 
