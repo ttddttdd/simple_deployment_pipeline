@@ -1,0 +1,9 @@
+---
+- name: install cockroachdb
+  include: install.yaml
+  when: action == "install"
+
+- name: load data for app
+  include: data_for_app.yaml
+  when: action == "data_for_app"
+...

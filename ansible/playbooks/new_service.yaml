@@ -1,0 +1,7 @@
+---
+- hosts: "{{ servers }}"
+  become: yes
+  roles:
+    - { role: 'cockroachdb', vars: { action: "install" }}
+    - { role: 'cockroachdb', vars: { action: "data_for_app" }}
+    - { role: 'app' }

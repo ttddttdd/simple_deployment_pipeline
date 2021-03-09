@@ -1,0 +1,26 @@
+---
+- name: Create bank db
+  command: cockroach sql --execute="CREATE DATABASE bank;" \
+          --certs-dir=/opt/cockroach/certs --host=localhost:26257
+  become_user: "cockroach"
+
+- name: Add a abc user
+  command: cockroach sql --execute="CREATE USER abc;" \
+          --certs-dir=/opt/cockroach/certs --host=localhost:26257
+  become_user: "cockroach"
+
+- name: Grant permissions for abc user
+  command: cockroach sql --execute="GRANT ALL ON DATABASE bank TO abc;" \
+          --certs-dir=/opt/cockroach/certs --host=localhost:26257
+  become_user: "cockroach"
+
+- name: Create a accounts table on bank db
+  command: cockroach sql --execute="CREATE TABLE IF NOT EXISTS bank.accounts (id INT PRIMARY KEY, balance INT);" \
+          --certs-dir=/opt/cockroach/certs --host=localhost:26257
+  become_user: "cockroach"
+
+- name: Insert data to a accounts table
+  command: cockroach sql --execute="INSERT INTO bank.accounts (id, balance) VALUES (1, 1000), (2, 250);" \
+          --certs-dir=/opt/cockroach/certs --host=localhost:26257
+  become_user: "cockroach"
+...

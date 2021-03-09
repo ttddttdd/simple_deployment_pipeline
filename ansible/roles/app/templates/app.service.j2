@@ -1,0 +1,15 @@
+[Unit]
+Description=Bank app
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=app
+WorkingDirectory=/opt/app
+ExecStart=/opt/app/app-linux-amd64
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+cockroach_user: "cockroach"
+cockroach_dir: "/opt/cockroach"

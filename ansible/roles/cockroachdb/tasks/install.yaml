@@ -1,0 +1,53 @@
+---
+- name: Copy cockroachdb on server
+  copy:
+    src: "cockroach"
+    dest: "/usr/local/bin/cockroach"
+    mode: '0755'
+
+- name: Create cockroachdb user
+  user:
+    name: "cockroach"
+    shell: "/bin/bash"
+    system: yes
+
+- name: Create cockroachdb directory
+  file:
+    path: "/opt/cockroach/{{ item }}"
+    state: directory
+    owner: "cockroach"
+    group: "cockroach"
+  loop:
+    - certs
+    - "{{  ansible_default_ipv4.address }}"
+
+- name: Copy cockroachdb's certs and keys
+  copy:
+    src: "{{ item.name }}"
+    dest: "/opt/cockroach/certs/{{ item.name }}"
+    owner: "cockroach"
+    group: "cockroach"
+    mode: "{{ item.mode }}"
+  loop:
+    - { name: "ca.crt", mode: '0644'}
+    - { name: "ca.key", mode: '0600'}
+    - { name: "client.root.crt", mode: '0644'}
+    - { name: "client.root.key", mode: '0600'}
+  no_log: True
+
+- name: Generate cert and key for cockroachdb node
+  command: cockroach cert create-node {{ ansible_default_ipv4.address }} localhost \
+          --certs-dir=/opt/cockroach/certs \
+          --ca-key=/opt/cockroach/certs/ca.key
+  become_user: "cockroach"
+  no_log: True
+
+- name: Start cockroachdb
+  command: cockroach start-single-node \
+          --store=/opt/cockroach/{{  ansible_default_ipv4.address }}
+          --certs-dir=/opt/cockroach/certs \
+          --listen-addr=localhost:26257 \
+          --http-addr={{  ansible_default_ipv4.address }}:8080 \
+          --background
+  become_user: "cockroach"
+...
